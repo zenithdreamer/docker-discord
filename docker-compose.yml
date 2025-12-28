@@ -9,4 +9,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./projects.json:/app/projects.json:ro
       - ${HOME}/.docker/config.json:/root/.docker/config.json:ro
+      - ${HOME}/.password-store:/root/.password-store:ro
+      - ${HOME}/.gnupg:/root/.gnupg:ro
     restart: unless-stopped
