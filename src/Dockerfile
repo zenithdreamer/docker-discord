@@ -2,6 +2,9 @@ FROM oven/bun:1.3-debian
 
 WORKDIR /app
 
+# Create Docker config directory
+RUN mkdir -p /root/.docker
+
 # Install Docker CLI and Compose plugin
 RUN apt-get update && \
     apt-get install -y ca-certificates curl && \

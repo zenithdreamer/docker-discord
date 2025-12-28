@@ -8,4 +8,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./projects.json:/app/projects.json:ro
+      - ${HOME}/.docker/config.json:/root/.docker/config.json:ro
     restart: unless-stopped
