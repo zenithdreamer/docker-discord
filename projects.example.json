@@ -5,7 +5,8 @@
       "name": "Development",
       "description": "Development environment",
       "composePath": "/home/runner/dev",
-      "composeCommand": "docker"
+      "composeCommand": "docker",
+      "projectName": "dev"
     },
     {
       "id": "production",

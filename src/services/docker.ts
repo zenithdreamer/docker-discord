@@ -11,14 +11,21 @@ import type { ComposeResult, Project } from "../types/index";
  *
  */
 
-function composeArgs(args: string[]): string[] {
+function composeArgs(args: string[], project: Project): string[] {
   // Compose CLI supports `docker compose ...`
-  return ["compose", "--ansi", "never", ...args];
+  const baseArgs = ["compose", "--ansi", "never"];
+
+  // Add project name if specified
+  if (project.projectName) {
+    baseArgs.push("-p", project.projectName);
+  }
+
+  return [...baseArgs, ...args];
 }
 
 export async function runCompose(args: string[], project: Project): Promise<ComposeResult> {
   const command = project.composeCommand;
-  const fullArgs = composeArgs(args);
+  const fullArgs = composeArgs(args, project);
 
   try {
     if (!existsSync(project.composePath)) {
@@ -119,7 +126,7 @@ export async function runComposeStreaming(
   onStart?: (child: ReturnType<typeof spawn>) => void,
 ): Promise<ComposeResult> {
   const command = project.composeCommand;
-  const fullArgs = composeArgs(args);
+  const fullArgs = composeArgs(args, project);
 
   if (!existsSync(project.composePath)) {
     return {

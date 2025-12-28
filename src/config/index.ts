@@ -16,6 +16,7 @@ const projectSchema = z.object({
   description: z.string(),
   composePath: z.string().min(1),
   composeCommand: z.string().default("docker"),
+  projectName: z.string().optional(),
 });
 
 const projectsConfigSchema = z.object({

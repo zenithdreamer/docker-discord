@@ -102,6 +102,11 @@ export async function getDockerDiskUsage() {
 
 // Helper to get project label from compose path
 function getProjectLabel(project: Project): string {
+  // Use custom project name if specified, otherwise fall back to directory name
+  if (project.projectName) {
+    return project.projectName;
+  }
+
   // Docker Compose uses the directory name as project name by default
   const pathParts = project.composePath.split('/');
   return pathParts[pathParts.length - 1].toLowerCase();

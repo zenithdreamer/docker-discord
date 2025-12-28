@@ -34,6 +34,7 @@ export interface Project {
   description: string;
   composePath: string;
   composeCommand: string;
+  projectName?: string;
 }
 
 export interface ProjectsConfig {
