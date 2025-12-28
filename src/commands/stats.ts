@@ -1,4 +1,5 @@
 import os from "node:os";
+import fs from "node:fs";
 import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import {
   listContainers,
@@ -31,6 +32,34 @@ function formatDuration(seconds: number): string {
 
 function formatPercent(value: number): string {
   return `${value.toFixed(1)}%`;
+}
+
+function getMemoryInfo(): { total: number; available: number } {
+  try {
+    // Read /proc/meminfo for accurate Linux memory stats
+    const meminfo = fs.readFileSync("/proc/meminfo", "utf-8");
+    const lines = meminfo.split("\n");
+
+    let memTotal = 0;
+    let memAvailable = 0;
+
+    for (const line of lines) {
+      if (line.startsWith("MemTotal:")) {
+        memTotal = parseInt(line.split(/\s+/)[1]) * 1024; // Convert KB to bytes
+      } else if (line.startsWith("MemAvailable:")) {
+        memAvailable = parseInt(line.split(/\s+/)[1]) * 1024; // Convert KB to bytes
+      }
+    }
+
+    if (memTotal > 0 && memAvailable > 0) {
+      return { total: memTotal, available: memAvailable };
+    }
+  } catch (error) {
+    // Fallback to os module if /proc/meminfo is not available
+  }
+
+  // Fallback to Node.js os module
+  return { total: os.totalmem(), available: os.freemem() };
 }
 
 export async function handleStats(interaction: ChatInputCommandInteraction) {
@@ -112,9 +141,10 @@ export async function handleStats(interaction: ChatInputCommandInteraction) {
   const reclaimableSpace = df.LayersSize ?? 0;
 
   // Host system resources
-  const totalMem = os.totalmem();
-  const freeMem = os.freemem();
-  const usedMem = totalMem - freeMem;
+  const memInfo = getMemoryInfo();
+  const totalMem = memInfo.total;
+  const availableMem = memInfo.available;
+  const usedMem = totalMem - availableMem;
   const memUsagePercent = (usedMem / totalMem) * 100;
 
   const loadAvg = os.loadavg();
