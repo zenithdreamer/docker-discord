@@ -73,7 +73,9 @@ export function createErrorEmbed(
   });
 
   if (details) {
-    const truncated = truncateText(details, 1024);
+    // Account for code block markers (```\n and \n```) = 8 characters
+    const maxLength = 1024 - 8;
+    const truncated = truncateText(details, maxLength);
     embed.addFields({ name: "Details", value: `\`\`\`\n${truncated}\n\`\`\`` });
   }
 
