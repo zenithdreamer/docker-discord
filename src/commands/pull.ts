@@ -128,10 +128,32 @@ export async function handlePull(interaction: ChatInputCommandInteraction, proje
     finalColor = COLORS.SUCCESS;
     finalFooter = "Completed";
   } else {
+    // Combine stderr and stdout for better error context
+    const errorOutput = (result.stderr || result.stdout || "Unknown error").trim();
+
+    // Try to extract more helpful error messages
+    let errorDetail = errorOutput;
+    if (errorOutput.includes("denied") || errorOutput.includes("unauthorized")) {
+      errorDetail = "Docker registry authentication failed. Check your Docker credentials.\n\n" + errorOutput;
+    } else if (errorOutput.includes("Received one or more errors")) {
+      // Parse out actual errors from the generic message
+      const lines = errorOutput.split("\n");
+      const errorLines = lines.filter(line =>
+        line.includes("error") ||
+        line.includes("Error") ||
+        line.includes("denied") ||
+        line.includes("unauthorized") ||
+        line.includes("failed")
+      );
+      if (errorLines.length > 0) {
+        errorDetail = errorLines.join("\n");
+      }
+    }
+
     const embed = createErrorEmbed(
       "Pull Failed",
       "Failed to pull Docker images",
-      result.stderr,
+      errorDetail,
     );
     await interaction.editReply({ embeds: [embed], components: [] });
     return;
