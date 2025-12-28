@@ -30,4 +30,14 @@ COPY src ./src
 
 ENV NODE_ENV=production
 
+# Create entrypoint script to copy GPG data to writable location
+RUN echo '#!/bin/sh\n\
+if [ -d /root/.gnupg-host ]; then\n\
+  cp -r /root/.gnupg-host /root/.gnupg\n\
+  chmod 700 /root/.gnupg\n\
+  chmod 600 /root/.gnupg/* 2>/dev/null || true\n\
+fi\n\
+exec "$@"' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bun", "start"]
