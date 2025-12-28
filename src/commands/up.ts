@@ -21,6 +21,8 @@ function statusMapper(status: string): { status: string; event: string } | null 
     return { status: "started", event: "Started" };
   } else if (status === "Running") {
     return { status: "running", event: "Already running" };
+  } else if (status === "Done") {
+    return { status: "done", event: "Running" };
   } else if (status === "Recreate") {
     return { status: "recreating", event: "Recreating..." };
   } else if (status === "Recreated") {
@@ -33,7 +35,7 @@ function statusMapper(status: string): { status: string; event: string } | null 
 
 function getStatusIcon(status: string): string {
   if (status === "healthy") return "💚";
-  if (status === "started" || status === "running") return ICONS.RUNNING;
+  if (status === "started" || status === "running" || status === "done") return ICONS.RUNNING;
   if (status === "starting") return ICONS.STARTING;
   if (status === "creating") return ICONS.BUILDING;
   if (status === "recreating" || status === "recreated") return ICONS.WARNING;
@@ -50,7 +52,7 @@ function getStatusCounts(services: Map<string, any>) {
   for (const service of services.values()) {
     if (service.status === "creating") creatingCount++;
     else if (service.status === "starting") startingCount++;
-    else if (service.status === "started" || service.status === "running") runningCount++;
+    else if (service.status === "started" || service.status === "running" || service.status === "done") runningCount++;
     else if (service.status === "healthy") healthyCount++;
     else if (service.status === "recreated" || service.status === "recreating") recreatedCount++;
   }
@@ -128,9 +130,18 @@ export async function handleUp(interaction: ChatInputCommandInteraction, project
 
   // Fixed interval polling for updates (every 2 seconds)
   let pendingUpdate = false;
+  let lastUpdateTime = Date.now();
   const updateInterval = setInterval(async () => {
-    if (aborted || !pendingUpdate) return;
+    if (aborted) return;
+
+    // Send update if we have pending changes OR if 4 seconds passed (heartbeat)
+    const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+    const shouldUpdate = pendingUpdate || timeSinceLastUpdate >= 4000;
+
+    if (!shouldUpdate) return;
+
     pendingUpdate = false;
+    lastUpdateTime = Date.now();
     updateCount++;
 
     const progressEmbed = buildProgressEmbed(progress, updateCount, {
@@ -213,6 +224,7 @@ export async function handleUp(interaction: ChatInputCommandInteraction, project
     footerText: finalFooter,
     getStatusIcon,
     getStatusCounts,
+    isComplete: true,
   });
   await interaction.editReply({ embeds: [finalEmbed], components: [] });
 }

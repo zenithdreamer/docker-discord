@@ -173,6 +173,7 @@ export function buildProgressEmbed(
     footerText: string;
     getStatusIcon: (status: string) => string;
     getStatusCounts: (services: Map<string, ServiceStatus>) => Array<{ label: string; count: number }>;
+    isComplete?: boolean;
   }
 ): EmbedBuilder {
   const embed = new EmbedBuilder()
@@ -267,9 +268,19 @@ export function buildProgressEmbed(
     .filter(s => s.count > 0)
     .map(s => s.label);
 
-  const summary = summaryParts.length > 0
-    ? summaryParts.join("  •  ")
-    : `${ICONS.INFO} Initializing...`;
+  let summary: string;
+  if (summaryParts.length > 0) {
+    summary = summaryParts.join("  •  ");
+  } else if (config.isComplete) {
+    // When complete but no service data, show network count or generic success
+    if (networks.size > 0) {
+      summary = `${ICONS.SUCCESS} ${networks.size} network(s) configured`;
+    } else {
+      summary = `${ICONS.SUCCESS} Operation completed successfully`;
+    }
+  } else {
+    summary = `${ICONS.INFO} Initializing...`;
+  }
 
   embed.setDescription(`**${config.heading}**\n\n${summary}`);
 
@@ -288,13 +299,13 @@ export function buildProgressEmbed(
     });
   }
 
-  if (services.size === 0) {
+  if (services.size === 0 && !config.isComplete) {
     embed.addFields({
       name: "Status",
       value: `${ICONS.LOADING} Waiting for services...`,
       inline: false,
     });
-  } else {
+  } else if (services.size > 0) {
     for (const [serviceName, service] of services.entries()) {
       const statusIcon = config.getStatusIcon(service.status);
       const statusText = service.latestEvent;

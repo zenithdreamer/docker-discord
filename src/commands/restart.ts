@@ -110,9 +110,18 @@ export async function handleRestart(interaction: ChatInputCommandInteraction, pr
 
   // Fixed interval polling for updates (every 2 seconds)
   let pendingUpdate = false;
+  let lastUpdateTime = Date.now();
   const updateInterval = setInterval(async () => {
-    if (aborted || !pendingUpdate) return;
+    if (aborted) return;
+
+    // Send update if we have pending changes OR if 4 seconds passed (heartbeat)
+    const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+    const shouldUpdate = pendingUpdate || timeSinceLastUpdate >= 4000;
+
+    if (!shouldUpdate) return;
+
     pendingUpdate = false;
+    lastUpdateTime = Date.now();
     updateCount++;
 
     const progressEmbed = buildProgressEmbed(progress, updateCount, {
@@ -195,6 +204,7 @@ export async function handleRestart(interaction: ChatInputCommandInteraction, pr
     footerText: finalFooter,
     getStatusIcon,
     getStatusCounts,
+    isComplete: true,
   });
   await interaction.editReply({ embeds: [finalEmbed], components: [] });
 }
