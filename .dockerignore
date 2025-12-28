@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Git
+.git/
+.gitignore
+
+# GitHub
+.github/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Build output
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project config (may contain sensitive paths)
+projects.json
+!projects.example.json
+
+# Misc
+README.md

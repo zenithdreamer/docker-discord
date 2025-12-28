@@ -1,0 +1,23 @@
+{
+  "name": "discord-cd",
+  "version": "0.1.0",
+  "description": "Discord-based CD helper bot for docker deployments.",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --hot run src/index.ts",
+    "dev:env": "bun --env-file=./src/.env --hot run src/index.ts",
+    "register-commands": "bun run src/registerCommands.ts",
+    "typecheck": "bun run --bun tsc --noEmit"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dockerode": "^4.0.9",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/dockerode": "^3.3.47",
+    "@types/node": "^20.11.30",
+    "typescript": "^5.9.3"
+  }
+}

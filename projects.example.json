@@ -1,0 +1,21 @@
+{
+  "projects": [
+    {
+      "id": "dev",
+      "name": "Development",
+      "description": "Development environment",
+      "composePath": "/home/runner/dev",
+      "composeCommand": "docker"
+    },
+    {
+      "id": "production",
+      "name": "Production",
+      "description": "Production environment",
+      "composePath": "/home/runner/production",
+      "composeCommand": "docker"
+    }
+  ],
+  "docker": {
+    "socketPath": "/var/run/docker.sock"
+  }
+}

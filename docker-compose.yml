@@ -1,0 +1,11 @@
+services:
+  discord-cd:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./projects.json:/app/projects.json:ro
+    restart: unless-stopped
