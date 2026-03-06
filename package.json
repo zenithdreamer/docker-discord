@@ -8,7 +8,8 @@
     "dev": "bun --hot run src/index.ts",
     "dev:env": "bun --env-file=./src/.env --hot run src/index.ts",
     "register-commands": "bun run src/registerCommands.ts",
-    "typecheck": "bun run --bun tsc --noEmit"
+    "test": "bun test src/__tests__",
+    "typecheck": "bun run --bun tsc --noEmit && bun run --bun tsc -p tsconfig.test.json --noEmit"
   },
   "dependencies": {
     "discord.js": "^14.15.3",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@types/dockerode": "^3.3.47",
     "@types/node": "^20.11.30",
+    "bun-types": "^1.3.10",
     "typescript": "^5.9.3"
   }
 }
