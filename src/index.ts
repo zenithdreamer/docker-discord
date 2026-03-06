@@ -10,6 +10,7 @@ import {
 } from "discord.js";
 import os from "node:os";
 import { config, isGuildAllowed, getProject } from "./config/index";
+import { formatDuration } from "./utils/formatting";
 import { registerCommandsForAllGuilds, clearAndRegisterCommandsForGuild, registerGlobalCommands } from "./services/discord";
 import { createErrorEmbed, createSuccessEmbed } from "./utils/embeds";
 import { handleStatus } from "./commands/status";
@@ -108,26 +109,6 @@ function attachCleanupHandlers(botClient: Client) {
   ["SIGINT", "SIGTERM", "SIGUSR2"].forEach((signal) => {
     process.once(signal, cleanup);
   });
-}
-
-function formatDuration(seconds: number): string {
-  const units: [number, string][] = [
-    [86400, "d"],
-    [3600, "h"],
-    [60, "m"],
-  ];
-
-  let remaining = Math.floor(seconds);
-  const parts: string[] = [];
-  for (const [unitSeconds, label] of units) {
-    if (remaining >= unitSeconds) {
-      const value = Math.floor(remaining / unitSeconds);
-      remaining -= value * unitSeconds;
-      parts.push(`${value}${label}`);
-    }
-  }
-  parts.push(`${remaining}s`);
-  return parts.join(" ");
 }
 
 function startPresenceUpdates(botClient: Client) {

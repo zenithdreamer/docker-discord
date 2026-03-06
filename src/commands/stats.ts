@@ -7,28 +7,8 @@ import {
   getDockerDiskUsage,
 } from "../services/dockerApi";
 import { COLORS, ICONS, createErrorEmbed } from "../utils/embeds";
-import { formatBytes } from "../utils/formatting";
+import { formatBytes, formatDuration } from "../utils/formatting";
 import { safeDeferReply } from "../utils/interactions";
-
-function formatDuration(seconds: number): string {
-  const units: [number, string][] = [
-    [86400, "d"],
-    [3600, "h"],
-    [60, "m"],
-  ];
-
-  let remaining = Math.floor(seconds);
-  const parts: string[] = [];
-  for (const [unitSeconds, label] of units) {
-    if (remaining >= unitSeconds) {
-      const value = Math.floor(remaining / unitSeconds);
-      remaining -= value * unitSeconds;
-      parts.push(`${value}${label}`);
-    }
-  }
-  parts.push(`${remaining}s`);
-  return parts.join(" ");
-}
 
 function formatPercent(value: number): string {
   return `${value.toFixed(1)}%`;

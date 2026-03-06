@@ -1,4 +1,5 @@
 import { ICONS } from "./embeds";
+import { isLayerId, resolveServiceName, normalizeAction } from "./composeProgress";
 import type { PullProgress, ServicePullStatus, LayerProgress } from "../types/index";
 
 export function createEmptyPullProgress(): PullProgress {
@@ -68,27 +69,6 @@ export function updatePullProgressFromJsonLine(line: string, state: PullProgress
 
   state.services.set(serviceName, service);
   recomputeSummary(state);
-}
-
-function normalizeAction(text: string): LayerProgress["action"] {
-  if (/Extracting/i.test(text)) return "Extracting";
-  if (/Pull complete/i.test(text) || /Pulled/i.test(text)) return "Pull complete";
-  if (/Already exists/i.test(text)) return "Already exists";
-  if (/Waiting/i.test(text)) return "Waiting";
-  return "Downloading";
-}
-
-function isLayerId(id: any): id is string {
-  return typeof id === "string" && /^[a-f0-9]{6,64}$/.test(id);
-}
-
-function resolveServiceName(event: any): string | undefined {
-  if (event.parent_id) return String(event.parent_id);
-  const id = event.id;
-  if (typeof id !== "string") return undefined;
-  // If the id looks like a human-friendly name, use it; if it's a layer hash, skip
-  if (!isLayerId(id) || id.length < 10) return id;
-  return undefined;
 }
 
 function recomputeSummary(state: PullProgress) {

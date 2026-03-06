@@ -1,5 +1,24 @@
 import { ICONS } from "./embeds";
 
+export function formatDuration(seconds: number): string {
+  const units: [number, string][] = [
+    [86400, "d"],
+    [3600, "h"],
+    [60, "m"],
+  ];
+  let remaining = Math.floor(seconds);
+  const parts: string[] = [];
+  for (const [unitSeconds, label] of units) {
+    if (remaining >= unitSeconds) {
+      const value = Math.floor(remaining / unitSeconds);
+      remaining -= value * unitSeconds;
+      parts.push(`${value}${label}`);
+    }
+  }
+  parts.push(`${remaining}s`);
+  return parts.join(" ");
+}
+
 export function getServiceStateIcon(state: string): string {
   const lowerState = state.toLowerCase();
   if (lowerState.includes("up") || lowerState.includes("running")) {
