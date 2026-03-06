@@ -1,7 +1,7 @@
 {
-  "name": "discord-cd",
+  "name": "docker-discord",
   "version": "0.1.0",
-  "description": "Discord-based CD helper bot for docker deployments.",
+  "description": "Discord bot for managing Docker deployments.",
   "type": "module",
   "scripts": {
     "start": "bun run src/index.ts",
